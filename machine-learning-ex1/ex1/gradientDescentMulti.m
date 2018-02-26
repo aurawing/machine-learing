@@ -18,13 +18,9 @@ for iter = 1:num_iters
     %
 
 
-
-
-
-
-
-
-
+    z = (X * theta - y) / m;
+    result = sum(X .* z);
+    theta = theta - alpha * result';
 
 
     % ============================================================
