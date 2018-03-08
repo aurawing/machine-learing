@@ -70,6 +70,14 @@ y1 = eq (ones(m,1) * (1:num_labels), y) * -1;
 y2 = eq (ones(m,1) * (1:num_labels), y) - 1;
 J = sum(sum(log(H) .* y1 + log(1 - H) .* y2, 1), 2) / m;
 
+% add regularized term
+Theta1_tmp = Theta1;
+Theta1_tmp(:,1) = 0;
+Theta2_tmp = Theta2;
+Theta2_tmp(:,1) = 0;
+regular_theta = sum(sum(Theta1_tmp .^ 2, 1), 2) + sum(sum(Theta2_tmp .^ 2, 1), 2);
+J = J + regular_theta * lambda / m /2;
+
 
 
 
