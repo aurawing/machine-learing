@@ -78,7 +78,17 @@ Theta2_tmp(:,1) = 0;
 regular_theta = sum(sum(Theta1_tmp .^ 2, 1), 2) + sum(sum(Theta2_tmp .^ 2, 1), 2);
 J = J + regular_theta * lambda / m /2;
 
-
+% backpropagation
+for 1:m,
+  exam = X(1,:);
+  a_1 = exam';
+  z_2 = Theta1 *  a_1;
+  a_2 = sigmoid(z_2);
+  z_3 = Theta2 * [1; a_2];
+  a_3 = sigmoid(z_3);
+  y_tmp = y(m);
+  y_tmp = eq(y_tmp * ones(num_labels, 1), 1:num_labels);
+end;
 
 
 
