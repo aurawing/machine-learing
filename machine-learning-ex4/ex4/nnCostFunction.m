@@ -91,8 +91,10 @@ for i=1:m,
   Theta2_grad = Theta2_grad .+ delta_3 * [1; a_2]';
   Theta1_grad = Theta1_grad .+ delta_2(2:end) * [1; a_1]';
 end;
-Theta1_grad = Theta1_grad ./ m;
-Theta2_grad = Theta2_grad ./ m;
+
+Theta1_grad = Theta1_grad ./ m + lambda * Theta1_tmp / m;
+Theta2_grad = Theta2_grad ./ m + lambda * Theta2_tmp / m;
+
 
 
 
