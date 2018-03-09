@@ -62,9 +62,7 @@ Theta2_grad = zeros(size(Theta2));
 %               and Theta2_grad from Part 2.
 %
 
-X = [ones(m, 1) X];
-
-H = sigmoid([ones(m, 1) sigmoid(X * Theta1')] * Theta2');
+H = sigmoid([ones(m, 1) sigmoid([ones(m, 1) X] * Theta1')] * Theta2');
 
 y1 = eq (ones(m,1) * (1:num_labels), y) * -1;
 y2 = eq (ones(m,1) * (1:num_labels), y) - 1;
@@ -78,17 +76,23 @@ Theta2_tmp(:,1) = 0;
 regular_theta = sum(sum(Theta1_tmp .^ 2, 1), 2) + sum(sum(Theta2_tmp .^ 2, 1), 2);
 J = J + regular_theta * lambda / m /2;
 
-% backpropagation
-for 1:m,
-  exam = X(1,:);
+for i=1:m,
+  % feedforward propagation
+  exam = X(i,:);
   a_1 = exam';
-  z_2 = Theta1 *  a_1;
+  z_2 = Theta1 * [1; a_1];
   a_2 = sigmoid(z_2);
   z_3 = Theta2 * [1; a_2];
   a_3 = sigmoid(z_3);
-  y_tmp = y(m);
-  y_tmp = eq(y_tmp * ones(num_labels, 1), 1:num_labels);
+  y_tmp = y(i);
+  y_tmp = eq(y_tmp * ones(num_labels, 1), (1:num_labels)');
+  delta_3 = a_3 - y_tmp;
+  delta_2 = (Theta2' * delta_3) .* ([1; a_2] .* (1 - [1; a_2]));
+  Theta2_grad = Theta2_grad .+ delta_3 * [1; a_2]';
+  Theta1_grad = Theta1_grad .+ delta_2(2:end) * [1; a_1]';
 end;
+Theta1_grad = Theta1_grad ./ m;
+Theta2_grad = Theta2_grad ./ m;
 
 
 
