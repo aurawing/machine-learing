@@ -164,7 +164,7 @@ pause;
 %  lambda to see how the fit and learning curve change.
 %
 
-lambda = 0;
+lambda = 3;
 [theta] = trainLinearReg(X_poly, y, lambda);
 
 % Plot training data and fit
@@ -215,6 +215,48 @@ for i = 1:length(lambda_vec)
 	fprintf(' %f\t%f\t%f\n', ...
             lambda_vec(i), error_train(i), error_val(i));
 end
+
+fprintf('Program paused. Press enter to continue.\n');
+pause;
+
+%% =========== Part 9: Computering test set error =============
+error_test = sum((X_poly_test * theta - ytest) .^ 2) / size(X_poly_test, 1) / 2;
+fprintf('Test error is : %f', error_test);
+fprintf('Program paused. Press enter to continue.\n');
+pause;
+
+%% =========== Part 10: Plotting learning curves with randomly selected examples ============
+
+lambda = 0.01;
+m = 12;
+error_train = zeros(m, 1);
+error_val   = zeros(m, 1);
+for i = 1:m,
+  for j = 1:50,
+    sel = randperm(size(X_poly, 1));
+    sel = sel(1:i);
+    X_poly_tmp = X_poly(sel, :);
+    y_poly_tmp = y(sel);
+    sel_val = randperm(size(X_poly_val, 1));
+    sel_val = sel_val(1:i);
+    X_poly_val_tmp = X_poly_val(sel_val, :);
+    y_poly_val_tmp = yval(sel_val);
+    
+    theta = trainLinearReg(X_poly_tmp, y_poly_tmp, lambda);
+    error_train(i) = error_train(i) + sum((X_poly_tmp * theta - y_poly_tmp) .^ 2) / i / 2;
+    error_val(i) = error_val(i) + sum((X_poly_val_tmp * theta - y_poly_val_tmp) .^ 2) / i / 2;
+  end
+  error_train(i) = error_train(i) / 50;
+  error_val(i) = error_val(i)  / 50;
+end;
+
+plot(1:m, error_train, 1:m, error_val);
+
+title(sprintf('Random Polynomial Regression Learning Curve (lambda = %f)', lambda));
+xlabel('Number of training examples')
+ylabel('Error')
+axis([0 13 0 100])
+legend('Train', 'Cross Validation')
 
 fprintf('Program paused. Press enter to continue.\n');
 pause;
